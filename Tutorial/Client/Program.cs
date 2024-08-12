@@ -42,6 +42,13 @@ namespace FlexRobotics.gfx.Client
         {
             // create some render hosts for rendering
             RenderHosts = WindowFactory.SeedWindows();
+
+            // render loop
+            while (!Dispatcher.HasShutdownStarted)
+            {
+                Render(RenderHosts);
+                System.Windows.Forms.Application.DoEvents();
+            }
         }
 
         /// <inheritdoc />
@@ -50,6 +57,15 @@ namespace FlexRobotics.gfx.Client
             // dispose all render hosts we have
             RenderHosts.ForEach(host => host.Dispose());
             RenderHosts = default;
+        }
+
+        #endregion
+
+        #region // render
+
+        private static void Render(IEnumerable<IRenderHost> renderHosts)
+        {
+            renderHosts.ForEach(rh => rh.Render());
         }
 
         #endregion

@@ -12,5 +12,7 @@ namespace FlexRobotics.gfx.Engine.Render
         /// Handle of hosting window.
         /// </summary>
         IntPtr HostHandle { get; }
+        FPSCounter FPSCounter { get; }
+        void Render();
     }
 }

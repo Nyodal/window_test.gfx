@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace FlexRobotics.gfx.Engine.Render
 {
@@ -17,6 +14,8 @@ namespace FlexRobotics.gfx.Engine.Render
         /// <inheritdoc />
         public IntPtr HostHandle { get; private set; }
 
+        public FPSCounter FPSCounter { get; private set; }
+
         #endregion
 
         #region // ctor
@@ -27,13 +26,31 @@ namespace FlexRobotics.gfx.Engine.Render
         protected RenderHost(IntPtr hostHandle)
         {
             HostHandle = hostHandle;
+
+            FPSCounter = new FPSCounter(new TimeSpan(0, 0, 0, 0, 1000));
         }
 
         /// <inheritdoc />
-        public void Dispose()
+        public virtual void Dispose()
         {
+            FPSCounter?.Dispose();
+            FPSCounter = default;
+
             HostHandle = default;
         }
+
+        #endregion
+
+        #region //render
+
+        public void Render()
+        {
+            FPSCounter.StartFrame();
+            RenderInternal();
+            FPSCounter.StopFrame();
+        }
+
+        protected abstract void RenderInternal();
 
         #endregion
     }

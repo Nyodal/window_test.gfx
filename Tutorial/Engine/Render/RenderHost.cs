@@ -33,7 +33,7 @@ namespace FlexRobotics.gfx.Engine.Render
         /// <inheritdoc />
         public virtual void Dispose()
         {
-            FPSCounter?.Dispose();
+            FPSCounter.Dispose();
             FPSCounter = default;
 
             HostHandle = default;

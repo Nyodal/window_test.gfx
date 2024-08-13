@@ -3,7 +3,9 @@ using FlexRobotics.gfx.Utilities;
 using FlexRobotics.gfx.Win;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
+using System.Windows.Media.Media3D;
 
 namespace FlexRobotics.gfx.Client
 {
@@ -31,6 +33,31 @@ namespace FlexRobotics.gfx.Client
         }
 
         /// <summary>
+        /// Create <see cref="System.Windows.Forms.Control"/> API create host control
+        /// </summary>
+        /// <returns></returns>
+        private static System.Windows.Forms.Control CreateHostControl()
+        {
+            var hostControl = new System.Windows.Forms.Panel()
+            {
+                Dock = System.Windows.Forms.DockStyle.None,
+                BackColor = System.Drawing.Color.Transparent,
+                ForeColor = System.Drawing.Color.Transparent,
+            };
+
+            // focus control to capture mouse wheel events
+            void EnsureFocus(System.Windows.Forms.Control control)
+            {
+                if (!control.Focused) control.Focus();
+            }
+
+            hostControl.MouseEnter += (sender, args) => EnsureFocus(hostControl);
+            hostControl.MouseClick += (sender, args) => EnsureFocus(hostControl);
+
+            return hostControl;
+        }
+
+        /// <summary>
         /// Create <see cref="System.Windows.Forms.Form"/> and <see cref="IRenderHost"/> for it.
         /// </summary>
         private static IRenderHost CreateWindowForm(System.Drawing.Size size, string title, Func<IntPtr, IRenderHost> ctorRenderHost)
@@ -41,20 +68,8 @@ namespace FlexRobotics.gfx.Client
                 Text = title,
             };
 
-            var hostControl = new System.Windows.Forms.Panel
-            {
-                Dock = System.Windows.Forms.DockStyle.Fill,
-                BackColor = System.Drawing.Color.Transparent,
-                ForeColor = System.Drawing.Color.Transparent,
-            };
+            var hostControl = CreateHostControl();
             window.Controls.Add(hostControl);
-
-            // fix mouse wheel
-            hostControl.MouseEnter += (sender, args) =>
-            {
-                if (System.Windows.Forms.Form.ActiveForm != window) window.Activate();
-                if (!hostControl.Focused) hostControl.Focus();
-            };
 
             window.Closed += (sender, args) => System.Windows.Application.Current.Shutdown();
 
@@ -75,19 +90,15 @@ namespace FlexRobotics.gfx.Client
                 Title = title,
             };
 
-            var hostControl = new System.Windows.Controls.Grid
+            var hostControl = CreateHostControl();
+            
+            // create forms host (wrapper for wpf)
+            var windowsFormsHost = new System.Windows.Forms.Integration.WindowsFormsHost 
             {
-                Background = System.Windows.Media.Brushes.Transparent,
-                Focusable = true,
+                Child = hostControl,
             };
-            window.Content = hostControl;
 
-            // fix mouse wheel (although it's only for Windows.Forms, this is just OCD to make window active as well)
-            hostControl.MouseEnter += (sender, args) =>
-            {
-                if (!window.IsActive) window.Activate();
-                if (!hostControl.IsFocused) hostControl.Focus();
-            };
+            window.Content = windowsFormsHost;
 
             window.Closed += (sender, args) => System.Windows.Application.Current.Shutdown();
 

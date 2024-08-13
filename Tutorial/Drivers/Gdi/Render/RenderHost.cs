@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Media.Animation;
+using FlexRobotics.gfx.Win;
 
 
 namespace FlexRobotics.gfx.Drivers.Gdi.Render
@@ -14,6 +16,10 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
 
         private Graphics GraphicsHost {  get; set; }
         private Font FontConsolas12 { get; set; }
+        /// <summary>
+        /// double buffer wrapper
+        /// </summary>
+        private BufferedGraphics BufferedGraphics { get; set; }
 
         #endregion
 
@@ -25,15 +31,21 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
             base(hostHandle)
         {
             GraphicsHost = Graphics.FromHwnd(HostHandle);
-            FontConsolas12 = new Font("Consolas", 11f);
+
+            BufferedGraphics = BufferedGraphicsManager.Current.Allocate(GraphicsHost, new Rectangle(Point.Empty, W.GetClientRectangle(hostHandle).Size));
+
+            FontConsolas12 = new Font("Consolas", 12f);
         }
 
         public override void Dispose()
         {
-            GraphicsHost?.Dispose();
+            GraphicsHost.Dispose();
             GraphicsHost = default;
 
-            FontConsolas12?.Dispose();
+            BufferedGraphics.Dispose();
+            BufferedGraphics = default;
+
+            FontConsolas12.Dispose();
             FontConsolas12 = default;
 
             base.Dispose();
@@ -45,8 +57,10 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
 
         protected override void RenderInternal()
         {
-            GraphicsHost.Clear(Color.Black);
-            GraphicsHost.DrawString(FPSCounter.FPSString, FontConsolas12, Brushes.Red, 0, 0); 
+            BufferedGraphics.Graphics.Clear(Color.Black);
+            BufferedGraphics.Graphics.DrawString(FPSCounter.FPSString, FontConsolas12, Brushes.Red, 0, 0);
+
+            BufferedGraphics.Render();
         }
 
         #endregion

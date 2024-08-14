@@ -1,5 +1,5 @@
-﻿using System;
-using System.Net.Http.Headers;
+﻿using FlexRobotics.gfx.Inputs;
+using System;
 
 namespace FlexRobotics.gfx.Engine.Render
 {
@@ -13,7 +13,7 @@ namespace FlexRobotics.gfx.Engine.Render
 
         /// <inheritdoc />
         public IntPtr HostHandle { get; private set; }
-
+        public IInput HostInput { get; private set; }
         public FPSCounter FPSCounter { get; private set; }
 
         #endregion
@@ -23,9 +23,10 @@ namespace FlexRobotics.gfx.Engine.Render
         /// <summary>
         /// Constructor.
         /// </summary>
-        protected RenderHost(IntPtr hostHandle)
+        protected RenderHost(IRenderHostSetup renderHostSetup)
         {
-            HostHandle = hostHandle;
+            HostHandle = renderHostSetup.HostHandle;
+            HostInput = renderHostSetup.HostInput;
 
             FPSCounter = new FPSCounter(new TimeSpan(0, 0, 0, 0, 1000));
         }
@@ -37,6 +38,9 @@ namespace FlexRobotics.gfx.Engine.Render
             FPSCounter = default;
 
             HostHandle = default;
+
+            HostInput?.Dispose();
+            HostInput = default;
         }
 
         #endregion

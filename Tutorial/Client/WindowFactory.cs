@@ -1,11 +1,10 @@
 ﻿using FlexRobotics.gfx.Engine.Render;
+using FlexRobotics.gfx.Inputs;
 using FlexRobotics.gfx.Utilities;
 using FlexRobotics.gfx.Win;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
 using System.Linq;
-using System.Windows.Media.Media3D;
 
 namespace FlexRobotics.gfx.Client
 {
@@ -22,8 +21,8 @@ namespace FlexRobotics.gfx.Client
             // create windows (and render hosts)
             var renderHosts = new[]
             {
-                CreateWindowForm(size, "Forms Gdi", h => new Drivers.Gdi.Render.RenderHost(h)),
-                CreateWindowWpf(size, "Wpf Gdi", h => new Drivers.Gdi.Render.RenderHost(h)),
+                CreateWindowForm(size, "Forms Gdi", rhs => new Drivers.Gdi.Render.RenderHost(rhs)),
+                CreateWindowWpf(size, "Wpf Gdi", rhs => new Drivers.Gdi.Render.RenderHost(rhs)),
             };
 
             // sort windows in the middle of screen
@@ -40,7 +39,7 @@ namespace FlexRobotics.gfx.Client
         {
             var hostControl = new System.Windows.Forms.Panel()
             {
-                Dock = System.Windows.Forms.DockStyle.None,
+                Dock = System.Windows.Forms.DockStyle.Fill,
                 BackColor = System.Drawing.Color.Transparent,
                 ForeColor = System.Drawing.Color.Transparent,
             };
@@ -60,7 +59,7 @@ namespace FlexRobotics.gfx.Client
         /// <summary>
         /// Create <see cref="System.Windows.Forms.Form"/> and <see cref="IRenderHost"/> for it.
         /// </summary>
-        private static IRenderHost CreateWindowForm(System.Drawing.Size size, string title, Func<IntPtr, IRenderHost> ctorRenderHost)
+        private static IRenderHost CreateWindowForm(System.Drawing.Size size, string title, Func<IRenderHostSetup, IRenderHost> ctorRenderHost)
         {
             var window = new System.Windows.Forms.Form
             {
@@ -75,13 +74,13 @@ namespace FlexRobotics.gfx.Client
 
             window.Show();
 
-            return ctorRenderHost(hostControl.Handle());
+            return ctorRenderHost(new RenderHostSetup(hostControl.Handle(), new InputForms(hostControl)));
         }
 
         /// <summary>
         /// Create <see cref="System.Windows.Window"/> and <see cref="IRenderHost"/> for it.
         /// </summary>
-        private static IRenderHost CreateWindowWpf(System.Drawing.Size size, string title, Func<IntPtr, IRenderHost> ctorRenderHost)
+        private static IRenderHost CreateWindowWpf(System.Drawing.Size size, string title, Func<IRenderHostSetup, IRenderHost> ctorRenderHost)
         {
             var window = new System.Windows.Window
             {
@@ -91,9 +90,9 @@ namespace FlexRobotics.gfx.Client
             };
 
             var hostControl = CreateHostControl();
-            
+
             // create forms host (wrapper for wpf)
-            var windowsFormsHost = new System.Windows.Forms.Integration.WindowsFormsHost 
+            var windowsFormsHost = new System.Windows.Forms.Integration.WindowsFormsHost
             {
                 Child = hostControl,
             };
@@ -104,7 +103,7 @@ namespace FlexRobotics.gfx.Client
 
             window.Show();
 
-            return ctorRenderHost(hostControl.Handle());
+            return ctorRenderHost(new RenderHostSetup(hostControl.Handle(), new InputForms(hostControl)));
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace FlexRobotics.gfx.Engine.Render
     {
         #region // storage
 
-        public TimeSpan UpdateRate { get;}
+        public TimeSpan UpdateRate { get; }
         public double FPSRender { get; private set; }
         public double FPSGlobal { get; private set; }
         public string FPSString => $"FPS: {FPSRender:0} ({FPSGlobal:0})";
@@ -16,7 +16,7 @@ namespace FlexRobotics.gfx.Engine.Render
         private int FrameCount { get; set; }
         private Stopwatch StopwatchUpdate { get; set; }
         private Stopwatch StopwatchFrame { get; set; }
-        
+
 
         #endregion
 

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Media.Animation;
+﻿using FlexRobotics.gfx.Engine.Render;
 using FlexRobotics.gfx.Win;
+using System.Drawing;
 
 
 namespace FlexRobotics.gfx.Drivers.Gdi.Render
@@ -14,7 +13,7 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
     {
         #region // storage
 
-        private Graphics GraphicsHost {  get; set; }
+        private Graphics GraphicsHost { get; set; }
         private Font FontConsolas12 { get; set; }
         /// <summary>
         /// double buffer wrapper
@@ -27,12 +26,12 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
         /// <summary>
         /// Constructor.
         /// </summary>
-        public RenderHost(IntPtr hostHandle) :
-            base(hostHandle)
+        public RenderHost(IRenderHostSetup renderHostSetup) :
+            base(renderHostSetup)
         {
-            GraphicsHost = Graphics.FromHwnd(HostHandle);
+            GraphicsHost = Graphics.FromHwnd(renderHostSetup.HostHandle);
 
-            BufferedGraphics = BufferedGraphicsManager.Current.Allocate(GraphicsHost, new Rectangle(Point.Empty, W.GetClientRectangle(hostHandle).Size));
+            BufferedGraphics = BufferedGraphicsManager.Current.Allocate(GraphicsHost, new Rectangle(Point.Empty, W.GetClientRectangle(renderHostSetup.HostHandle).Size));
 
             FontConsolas12 = new Font("Consolas", 12f);
         }

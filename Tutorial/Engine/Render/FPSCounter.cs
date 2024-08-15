@@ -8,20 +8,53 @@ namespace FlexRobotics.gfx.Engine.Render
     {
         #region // storage
 
+        /// <summary>
+        /// Time amount which defines how frequently we do measurements.
+        /// </summary>
         public TimeSpan UpdateRate { get; }
-        public double FPSRender { get; private set; }
-        public double FPSGlobal { get; private set; }
-        public string FPSString => $"FPS: {FPSRender:0} ({FPSGlobal:0})";
-        private TimeSpan Elapsed { get; set; }
-        private int FrameCount { get; set; }
+
+        /// <summary>
+        /// Stopwatch to measure how much time elapsed since last measurement.
+        /// </summary>
         private Stopwatch StopwatchUpdate { get; set; }
+
+        /// <summary>
+        /// Stopwatch to measure how much time elapsed since the beginning of the frame.
+        /// </summary>
         private Stopwatch StopwatchFrame { get; set; }
 
+        /// <summary>
+        /// Sum of all <see cref="StopwatchFrame"/> since last measurement. 
+        /// </summary>
+        private TimeSpan Elapsed { get; set; }
+
+        /// <summary>
+        /// Count of frames since last measurement.
+        /// </summary>
+        private int FrameCount { get; set; }
+
+        /// <summary>
+        /// Average fps (for rendering) in last <see cref="UpdateRate"/> amount of time.
+        /// </summary>
+        public double FpsRender { get; private set; }
+
+        /// <summary>
+        /// Average fps (for global rendering) in last <see cref="UpdateRate"/> amount of time.
+        /// </summary>
+        public double FpsGlobal { get; private set; }
+
+        /// <summary>
+        /// Human readable fps string.
+        /// </summary>
+        public string FPSString => $"FPS = {FpsRender:0} ({FpsGlobal:0})";
 
         #endregion
 
         #region // ctor
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public FPSCounter(TimeSpan updateRate)
         {
             UpdateRate = updateRate;
@@ -34,6 +67,7 @@ namespace FlexRobotics.gfx.Engine.Render
             Elapsed = TimeSpan.Zero;
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             StopwatchUpdate.Stop();
@@ -47,23 +81,36 @@ namespace FlexRobotics.gfx.Engine.Render
 
         #region // routines
 
+        /// <summary>
+        /// Start frame measurement.
+        /// </summary>
         public void StartFrame()
         {
             StopwatchFrame.Restart();
         }
 
+        /// <summary>
+        /// Stop frame measurement.
+        /// </summary>
         public void StopFrame()
         {
             StopwatchFrame.Stop();
-            Elapsed = StopwatchFrame.Elapsed;
+
+            // add elapsed time of this frame
+            Elapsed += StopwatchFrame.Elapsed;
+
+            // increment frame count to respectively keep ratio
             FrameCount++;
 
+            // check if we need to do average measurement
             var updateElapsed = StopwatchUpdate.Elapsed;
             if (updateElapsed >= UpdateRate)
             {
-                FPSRender = FrameCount / Elapsed.TotalSeconds;
-                FPSGlobal = FrameCount / updateElapsed.TotalSeconds;
+                // calc averages
+                FpsRender = FrameCount / Elapsed.TotalSeconds;
+                FpsGlobal = FrameCount / updateElapsed.TotalSeconds;
 
+                // reset
                 StopwatchUpdate.Restart();
                 Elapsed = TimeSpan.Zero;
                 FrameCount = 0;

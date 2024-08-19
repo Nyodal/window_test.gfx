@@ -53,8 +53,8 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
         {
             GraphicsHost = Graphics.FromHwnd(HostHandle);
             GraphicsHostDeviceContext = GraphicsHost.GetHdc();
+            CreateSurface(HostInput.Size);
             CreateBuffers(BufferSize);
-            CreateViewport(ViewportSize);
             FontConsolas12 = new Font("Consolas", 12);
         }
 
@@ -65,7 +65,7 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
             FontConsolas12 = default;
 
             DisposeBuffers();
-            DisposeViewport();
+            DisposeSurface();
 
             GraphicsHost.ReleaseHdc(GraphicsHostDeviceContext);
             GraphicsHostDeviceContext = default;
@@ -81,21 +81,22 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
         #region // routines
 
         /// <inheritdoc />
+        /// <inheritdoc />
+        protected override void ResizeHost(Size size)
+        {
+            base.ResizeHost(size);
+
+            DisposeSurface();
+            CreateSurface(size);
+        }
+
+        /// <inheritdoc />
         protected override void ResizeBuffers(Size size)
         {
             base.ResizeBuffers(size);
 
             DisposeBuffers();
             CreateBuffers(size);
-        }
-
-        /// <inheritdoc />
-        protected override void ResizeViewport(Size size)
-        {
-            base.ResizeViewport(size);
-
-            DisposeViewport();
-            CreateViewport(size);
         }
 
         private void CreateBuffers(Size size)
@@ -109,13 +110,13 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
             BackBuffer = default;
         }
 
-        private void CreateViewport(Size size)
+        private void CreateSurface(Size size)
         {
             BufferedGraphics = BufferedGraphicsManager.Current.Allocate(GraphicsHostDeviceContext, new Rectangle(Point.Empty, size));
             BufferedGraphics.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
         }
 
-        private void DisposeViewport()
+        private void DisposeSurface()
         {
             BufferedGraphics.Dispose();
             BufferedGraphics = default;
@@ -131,13 +132,12 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
             var graphics = BackBuffer.Graphics;
 
             var t = DateTime.UtcNow.Millisecond / 1000.0;
-            var s = Math.Sin(t * Math.PI);
             Color GetColor(int x, int y) => Color.FromArgb
             (
                 byte.MaxValue,
                 (byte)((double)x / BufferSize.Width * byte.MaxValue),
                 (byte)((double)y / BufferSize.Height * byte.MaxValue),
-                (byte)(s * byte.MaxValue)
+                (byte)(Math.Sin(t * Math.PI) * byte.MaxValue)
             );
 
             Parallel.For(0, BackBuffer.Buffer.Length, index =>
@@ -148,11 +148,11 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
 
             graphics.DrawString(FPSCounter.FPSString, FontConsolas12, Brushes.Red, 0, 0);
             graphics.DrawString($"Buffer   = {BufferSize.Width}, {BufferSize.Height}", FontConsolas12, Brushes.Cyan, 0, 16);
-            graphics.DrawString($"Viewport = {ViewportSize.Width}, {ViewportSize.Height}", FontConsolas12, Brushes.Cyan, 0, 32);
+            graphics.DrawString($"Viewport = {Viewport.Width}, {Viewport.Height}", FontConsolas12, Brushes.Cyan, 0, 32);
 
 
             // flush and swap buffers
-            BufferedGraphics.Graphics.DrawImage(BackBuffer.Bitmap, new RectangleF(PointF.Empty, ViewportSize), new RectangleF(new PointF(-0.5f, -0.5f), BufferSize), GraphicsUnit.Pixel);
+            BufferedGraphics.Graphics.DrawImage(BackBuffer.Bitmap, new RectangleF(PointF.Empty, HostSize), new RectangleF(new PointF(-0.5f, -0.5f), BufferSize), GraphicsUnit.Pixel);
             BufferedGraphics.Render(GraphicsHostDeviceContext);
         }
 

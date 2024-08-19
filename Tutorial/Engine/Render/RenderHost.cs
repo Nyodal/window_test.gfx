@@ -1,4 +1,5 @@
 ﻿using FlexRobotics.gfx.Inputs;
+using FlexRobotics.gfx.Engine.Commons;
 using System;
 using System.Drawing;
 
@@ -21,11 +22,15 @@ namespace FlexRobotics.gfx.Engine.Render
         /// Desired buffer size.
         /// </summary>
         protected Size BufferSize { get; private set; }
+        /// <summary>
+        /// Desired surface size
+        /// </summary>
+        protected Size HostSize { get; private set; }
 
         /// <summary>
         /// Viewport size. The size into which buffer will be scaled.
         /// </summary>
-        protected Size ViewportSize { get; private set; }
+        protected Viewport Viewport { get; private set; }
         /// <inheritdoc />
         public FPSCounter FPSCounter { get; private set; }
 
@@ -42,7 +47,8 @@ namespace FlexRobotics.gfx.Engine.Render
             HostInput = renderHostSetup.HostInput;
 
             BufferSize = HostInput.Size;
-            ViewportSize = HostInput.Size;
+            HostSize = HostInput.Size;
+            Viewport = new Viewport(Point.Empty, HostInput.Size, 0, 1);
 
             FPSCounter = new FPSCounter(new TimeSpan(0, 0, 0, 0, 1000));
 
@@ -60,8 +66,9 @@ namespace FlexRobotics.gfx.Engine.Render
             FPSCounter.Dispose();
             FPSCounter = default;
 
+            Viewport = default;
             BufferSize = default;
-            ViewportSize = default;
+            HostSize = default;
 
             HostHandle = default;
         }
@@ -72,16 +79,26 @@ namespace FlexRobotics.gfx.Engine.Render
 
         private void HostInputOnSizeChanged(object sender, ISizeEventArgs args)
         {
-            var size = args.NewSize;
-
-            // sanity check
-            if (size.Width < 1 || size.Height < 1)
+            Size Sanitize(Size size)
             {
-                size = new Size(1, 1);
+                if (size.Width < 1 || size.Height < 1)
+                {
+                    size = new Size(1, 1);
+                }
+                return size;
             }
 
-            ResizeBuffers(size);
-            ResizeViewport(size);
+            var hostSize = Sanitize(HostInput.Size);
+            if (HostSize != hostSize)
+            {
+                ResizeHost(hostSize);
+            }
+
+            var bufferSize = Sanitize(args.NewSize);
+            if (BufferSize != bufferSize)
+            {
+                ResizeBuffers(bufferSize);
+            }
         }
 
         /// <summary>
@@ -95,9 +112,10 @@ namespace FlexRobotics.gfx.Engine.Render
         /// <summary>
         /// Resize viewport.
         /// </summary>
-        protected virtual void ResizeViewport(Size size)
+        protected virtual void ResizeHost(Size size)
         {
-            ViewportSize = size;
+            HostSize = size;
+            Viewport = new Viewport(Point.Empty, size, 0, 1);
         }
 
         #endregion

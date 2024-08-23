@@ -33,6 +33,10 @@ namespace FlexRobotics.gfx.Engine.Render
         protected Viewport Viewport { get; private set; }
         /// <inheritdoc />
         public FPSCounter FPSCounter { get; private set; }
+        /// <summary>
+        /// Timestamp when frame was started (UTC).
+        /// </summary>
+        protected DateTime FrameStarted { get; private set; }
 
         #endregion
 
@@ -124,6 +128,7 @@ namespace FlexRobotics.gfx.Engine.Render
 
         public void Render()
         {
+            FrameStarted = DateTime.UtcNow;
             FPSCounter.StartFrame();
             RenderInternal();
             FPSCounter.StopFrame();

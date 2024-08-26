@@ -137,7 +137,7 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
         {
             var graphics = BackBuffer.Graphics;
             graphics.Clear(Color.Black);
-            //DrawWorldAxis();
+            DrawWorldAxis();
             DrawGeometry();
 
             graphics.DrawString(FPSCounter.FPSString, FontConsolas12, Brushes.Red, 0, 0);
@@ -145,7 +145,7 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
             //graphics.DrawString($"Viewport = {Viewport.Width}, {Viewport.Height}", FontConsolas12, Brushes.Cyan, 0, 32);
 
             // flush and swap buffers
-            BufferedGraphics.Graphics.DrawImage(BackBuffer.Bitmap, new RectangleF(PointF.Empty, Viewport.Size), new RectangleF(new PointF(-0.5f, -0.5f), BufferSize), GraphicsUnit.Pixel);
+            BufferedGraphics.Graphics.DrawImage(BackBuffer.Bitmap, new RectangleF(PointF.Empty, HostSize), new RectangleF(new PointF(-0.5f, -0.5f), BufferSize), GraphicsUnit.Pixel);
             BufferedGraphics.Render(GraphicsHostDeviceContext);
         }
 
@@ -154,38 +154,10 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
             switch (space)
             {
                 case Space.World:
-                    var t = 0;//GetDeltaTime(new TimeSpan(0, 0, 0, 10));
-                    var angle = t * Math.PI * 2;
-                    var radius = 2;
-
-                    // view matrix
-                    var cameraPosition = new Vector3D(Math.Cos(angle) * radius, Math.Sin(angle) * radius, 1);
-                    var cameraTarget = new Vector3D(0, 0, 0);
-                    var cameraUpVector = UnitVector3D.ZAxis;
-                    var matrixView = MatrixEx.LookAtRH(cameraPosition, cameraTarget, cameraUpVector);
-
-                    // projection matrix
-                    var fovY = Math.PI * 0.5;
-                    var aspectRatio = (double)BufferSize.Width / BufferSize.Height;
-                    var nearPlane = 0.001;
-                    var farPlane = 1000;
-                    // ReSharper disable once UnusedVariable
-                    var matrixPerspective = MatrixEx.PerspectiveFovRH(fovY, aspectRatio, nearPlane, farPlane);
-
-                    var fieldHeight = 3;
-                    var fieldWidth = fieldHeight * aspectRatio;
-                    // ReSharper disable once UnusedVariable
-                    var matrixOrthographic = MatrixEx.OrthoRH(fieldWidth, fieldHeight, nearPlane, farPlane);
-
-                    var matrixProjection = matrixPerspective;
-
-                    // view space (NDC) to screen space matrix
-                    var matrixViewport = MatrixEx.Viewport(Viewport);
-
-                    DrawPolylineScreenSpace((matrixView * matrixProjection * matrixViewport).Transform(points), pen);
+                    DrawPolylineScreenSpace(CameraInfo.Cache.MatrixViewProjectionViewport.Transform(points), pen);
                     break;
                 case Space.View:
-                    DrawPolylineScreenSpace(MatrixEx.Viewport(Viewport).Transform(points), pen);
+                    DrawPolylineScreenSpace(CameraInfo.Cache.MatrixViewport.Transform(points), pen);
                     break;
 
                 case Space.Screen:
@@ -215,7 +187,7 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
             return GetDeltaTime(FrameStarted, periodDuration);
         }
 
-        private static double GetDeltaTime(DateTime timestamp, TimeSpan periodDuration)
+        public static double GetDeltaTime(DateTime timestamp, TimeSpan periodDuration)
         {
             return (timestamp.Second * 1000 + timestamp.Millisecond) % periodDuration.TotalMilliseconds / periodDuration.TotalMilliseconds;
         }
@@ -253,11 +225,17 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
 
         private void DrawGeometry()
         {
+            // screen space
+            DrawPolyline(new[] { new Point3D(3, 20, 0), new Point3D(140, 20, 0) }, Space.Screen, Pens.Gray);
+
+            // view space
+            DrawPolyline(new[] { new Point3D(-0.9, -0.9, 0), new Point3D(0.9, -0.9, 0) }, Space.View, Pens.Gray);
+
             // bigger cube
             var angle = GetDeltaTime(new TimeSpan(0, 0, 0, 5)) * Math.PI * 2;
             var matrixModel =
                 MatrixEx.Scale(0.5) *
-                MatrixEx.Rotate(UnitVector3D.ZAxis, angle) *
+                MatrixEx.Rotate(UnitVector3D.XAxis, angle) *
                 MatrixEx.Translate(1, 0, 0);
 
             foreach (var cubePolyline in CubePolylines)
@@ -269,7 +247,7 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Render
             angle = GetDeltaTime(new TimeSpan(0, 0, 0, 1)) * Math.PI * 2;
             matrixModel =
                 MatrixEx.Scale(0.5) *
-                MatrixEx.Rotate(UnitVector3D.ZAxis, angle) *
+                MatrixEx.Rotate(UnitVector3D.YAxis, angle) *
                 MatrixEx.Translate(0, 1, 0) *
                 matrixModel;
 

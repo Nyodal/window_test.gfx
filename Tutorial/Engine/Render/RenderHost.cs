@@ -2,6 +2,9 @@
 using FlexRobotics.gfx.Engine.Commons;
 using System;
 using System.Drawing;
+using FlexRobotics.gfx.Engine.Commons.Camera;
+using FlexRobotics.gfx.Engine.Commons.Camera.Projections;
+using MathNet.Spatial.Euclidean;
 
 namespace FlexRobotics.gfx.Engine.Render
 {
@@ -31,12 +34,32 @@ namespace FlexRobotics.gfx.Engine.Render
         /// Viewport size. The size into which buffer will be scaled.
         /// </summary>
         protected Viewport Viewport { get; private set; }
+
+        /// <inheritdoc cref="CameraInfo" />
+        private ICameraInfo m_CameraInfo;
+
+        /// <inheritdoc />
+        public ICameraInfo CameraInfo
+        {
+            get => m_CameraInfo;
+            set
+            {
+                m_CameraInfo = value;
+                CameraInfoChanged?.Invoke(this, m_CameraInfo);
+            }
+        }
         /// <inheritdoc />
         public FPSCounter FPSCounter { get; private set; }
         /// <summary>
         /// Timestamp when frame was started (UTC).
         /// </summary>
         protected DateTime FrameStarted { get; private set; }
+
+        #endregion
+
+        #region // events
+
+        public event EventHandler<ICameraInfo> CameraInfoChanged;
 
         #endregion
 
@@ -50,13 +73,22 @@ namespace FlexRobotics.gfx.Engine.Render
             HostHandle = renderHostSetup.HostHandle;
             HostInput = renderHostSetup.HostInput;
 
-            BufferSize = HostInput.Size;
             HostSize = HostInput.Size;
-            Viewport = new Viewport(Point.Empty, HostInput.Size, 0, 1);
-
+            BufferSize = HostInput.Size;
+            CameraInfo = new CameraInfo
+            (
+                new Point3D(1, 1, 1),
+                new Point3D(0, 0, 0),
+                UnitVector3D.ZAxis,
+                new ProjectionPerspective(0.001, 1000, Math.PI * 0.5, 1),
+                //new ProjectionOrthographic(0.001, 1000, 2, 2),
+                new Viewport(0, 0, 1, 1, 0, 1)
+            );
             FPSCounter = new FPSCounter(new TimeSpan(0, 0, 0, 0, 1000));
 
             HostInput.SizeChanged += HostInputOnSizeChanged;
+
+            HostInputOnSizeChanged(this, new SizeEventArgs(HostSize));
         }
 
         /// <inheritdoc />
@@ -70,7 +102,7 @@ namespace FlexRobotics.gfx.Engine.Render
             FPSCounter.Dispose();
             FPSCounter = default;
 
-            Viewport = default;
+            CameraInfo = default;
             BufferSize = default;
             HostSize = default;
 
@@ -92,16 +124,34 @@ namespace FlexRobotics.gfx.Engine.Render
                 return size;
             }
 
-            var hostSize = Sanitize(HostInput.Size);
+            // update host (surface size)
+            var hostSize = Sanitize(args.NewSize);
             if (HostSize != hostSize)
             {
                 ResizeHost(hostSize);
             }
 
-            var bufferSize = Sanitize(args.NewSize);
-            if (BufferSize != bufferSize)
+            // update camera info
+            var cameraInfo = CameraInfo;
+            if (cameraInfo.Viewport.Size != hostSize)
             {
-                ResizeBuffers(bufferSize);
+                var viewport = new Viewport
+                (
+                    cameraInfo.Viewport.X,
+                    cameraInfo.Viewport.Y,
+                    hostSize.Width,
+                    hostSize.Height,
+                    cameraInfo.Viewport.MinZ,
+                    cameraInfo.Viewport.MaxZ
+                );
+                CameraInfo = new CameraInfo
+                (
+                    cameraInfo.Position,
+                    cameraInfo.Target,
+                    cameraInfo.UpVector,
+                    cameraInfo.Projection.GetAdjustedProjection(viewport.AspectRatio),
+                    viewport
+                );
             }
         }
 
@@ -119,7 +169,18 @@ namespace FlexRobotics.gfx.Engine.Render
         protected virtual void ResizeHost(Size size)
         {
             HostSize = size;
-            Viewport = new Viewport(Point.Empty, size, 0, 1);
+        }
+
+        /// <summary>
+        /// Ensure <see cref="BufferSize"/> are synced with <see cref="ICameraInfo"/>
+        /// </summary>
+        protected void EnsureBufferSize()
+        {
+            var size = CameraInfo.Viewport.Size;
+            if (BufferSize != size)
+            {
+                ResizeBuffers(size);
+            }
         }
 
         #endregion
@@ -128,6 +189,7 @@ namespace FlexRobotics.gfx.Engine.Render
 
         public void Render()
         {
+            EnsureBufferSize();
             FrameStarted = DateTime.UtcNow;
             FPSCounter.StartFrame();
             RenderInternal();

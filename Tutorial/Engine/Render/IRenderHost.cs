@@ -1,6 +1,7 @@
 ﻿using FlexRobotics.gfx.Engine.Commons.Camera;
 using FlexRobotics.gfx.Inputs;
 using System;
+using System.Drawing;
 
 namespace FlexRobotics.gfx.Engine.Render
 {
@@ -22,6 +23,11 @@ namespace FlexRobotics.gfx.Engine.Render
 
         /// <inheritdoc cref="ICameraInfo"/>
         ICameraInfo CameraInfo { get; set; }
+
+        /// <summary>
+        /// Desired surface size.
+        /// </summary>
+        Size HostSize { get; }
 
         /// <inheritdoc cref="Engine.Render.FpsCounter"/>
         FPSCounter FPSCounter { get; }

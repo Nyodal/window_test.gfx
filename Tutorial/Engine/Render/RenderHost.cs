@@ -5,6 +5,9 @@ using System.Drawing;
 using FlexRobotics.gfx.Engine.Commons.Camera;
 using FlexRobotics.gfx.Engine.Commons.Camera.Projections;
 using MathNet.Spatial.Euclidean;
+using FlexRobotics.gfx.Engine.Operators;
+using System.Collections.Generic;
+using FlexRobotics.gfx.Utilities;
 
 namespace FlexRobotics.gfx.Engine.Render
 {
@@ -28,7 +31,7 @@ namespace FlexRobotics.gfx.Engine.Render
         /// <summary>
         /// Desired surface size
         /// </summary>
-        protected Size HostSize { get; private set; }
+        public Size HostSize { get; private set; }
 
         /// <summary>
         /// Viewport size. The size into which buffer will be scaled.
@@ -55,6 +58,12 @@ namespace FlexRobotics.gfx.Engine.Render
         /// </summary>
         protected DateTime FrameStarted { get; private set; }
 
+        /// <summary>
+        /// Active operators.
+        /// </summary>
+        protected IEnumerable<IOperator> Operators { get; set; }
+
+
         #endregion
 
         #region // events
@@ -80,21 +89,24 @@ namespace FlexRobotics.gfx.Engine.Render
                 new Point3D(1, 1, 1),
                 new Point3D(0, 0, 0),
                 UnitVector3D.ZAxis,
-                new ProjectionPerspective(0.001, 1000, Math.PI * 0.5, 1),
+                new ProjectionPerspective(0.001, 1000, Math.PI * 0.5, 0.5),
                 //new ProjectionOrthographic(0.001, 1000, 2, 2),
                 new Viewport(0, 0, 1, 1, 0, 1)
             );
             FPSCounter = new FPSCounter(new TimeSpan(0, 0, 0, 0, 1000));
 
-            HostInput.SizeChanged += HostInputOnSizeChanged;
+            Operators = new List<IOperator>
+            {
+                new OperatorResize(this, ResizeHost),
+            };
 
-            HostInputOnSizeChanged(this, new SizeEventArgs(HostSize));
+            OperatorResize.Resize(this, HostSize, ResizeHost);
         }
 
         /// <inheritdoc />
         public virtual void Dispose()
         {
-            HostInput.SizeChanged -= HostInputOnSizeChanged;
+            Operators.ForEach(o => o.Dispose());
 
             HostInput.Dispose();
             HostInput = default;
@@ -113,47 +125,6 @@ namespace FlexRobotics.gfx.Engine.Render
 
         #region // routines
 
-        private void HostInputOnSizeChanged(object sender, ISizeEventArgs args)
-        {
-            Size Sanitize(Size size)
-            {
-                if (size.Width < 1 || size.Height < 1)
-                {
-                    size = new Size(1, 1);
-                }
-                return size;
-            }
-
-            // update host (surface size)
-            var hostSize = Sanitize(args.NewSize);
-            if (HostSize != hostSize)
-            {
-                ResizeHost(hostSize);
-            }
-
-            // update camera info
-            var cameraInfo = CameraInfo;
-            if (cameraInfo.Viewport.Size != hostSize)
-            {
-                var viewport = new Viewport
-                (
-                    cameraInfo.Viewport.X,
-                    cameraInfo.Viewport.Y,
-                    hostSize.Width,
-                    hostSize.Height,
-                    cameraInfo.Viewport.MinZ,
-                    cameraInfo.Viewport.MaxZ
-                );
-                CameraInfo = new CameraInfo
-                (
-                    cameraInfo.Position,
-                    cameraInfo.Target,
-                    cameraInfo.UpVector,
-                    cameraInfo.Projection.GetAdjustedProjection(viewport.AspectRatio),
-                    viewport
-                );
-            }
-        }
 
         /// <summary>
         /// Resize all buffers.

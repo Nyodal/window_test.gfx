@@ -89,8 +89,8 @@ namespace FlexRobotics.gfx.Engine.Render
                 new Point3D(1, 1, 1),
                 new Point3D(0, 0, 0),
                 UnitVector3D.ZAxis,
-                new ProjectionPerspective(0.001, 1000, Math.PI * 0.5, 0.5),
-                //new ProjectionOrthographic(0.001, 1000, 2, 2),
+                //new ProjectionPerspective(0.001, 1000, Math.PI * 0.5, 0.5),
+                new ProjectionOrthographic(0.001, 1000, 2, 2),
                 new Viewport(0, 0, 1, 1, 0, 1)
             );
             FPSCounter = new FPSCounter(new TimeSpan(0, 0, 0, 0, 1000));
@@ -98,6 +98,7 @@ namespace FlexRobotics.gfx.Engine.Render
             Operators = new List<IOperator>
             {
                 new OperatorResize(this, ResizeHost),
+                new OperatorCameraZoom(this),
             };
 
             OperatorResize.Resize(this, HostSize, ResizeHost);

@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using MathNet.Spatial.Euclidean;
 
 namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
 {
@@ -37,6 +38,9 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
 
         /// <inheritdoc />
         public abstract IProjection GetAdjustedProjection(double aspectRatio);
+
+        /// <inheritdoc />
+        public abstract Ray3D GetMouseRay(ICameraInfo cameraInfo, Point3D mouseWorld);
 
         #endregion
     }

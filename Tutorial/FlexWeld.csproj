@@ -46,8 +46,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -68,6 +68,7 @@
     <Compile Include="Engine\Commons\Camera\ICameraInfo.cs" />
     <Compile Include="Engine\Commons\Camera\ICameraInfoCache.cs" />
     <Compile Include="Engine\Commons\Camera\CameraInfoCache.cs" />
+    <Compile Include="Engine\Commons\Camera\ICameraInfoEx.cs" />
     <Compile Include="Engine\Commons\Camera\Projections\IProjection.cs" />
     <Compile Include="Engine\Commons\Camera\Projections\IProjectionOrthographic.cs" />
     <Compile Include="Engine\Commons\Camera\Projections\IProjectionPerspective.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Engine\Operators\IOperator.cs" />
     <Compile Include="Engine\Operators\Operator.cs" />
     <Compile Include="Engine\Operators\OperatorCameraZoom.cs" />
+    <Compile Include="Engine\Operators\OperatorCameraPan.cs" />
     <Compile Include="Engine\Operators\OperatorResize.cs" />
     <Compile Include="Engine\Render\FPSCounter.cs" />
     <Compile Include="Engine\Render\IRenderHost.cs" />

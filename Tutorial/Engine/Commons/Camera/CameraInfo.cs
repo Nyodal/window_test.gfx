@@ -25,8 +25,10 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera
         /// <inheritdoc />
         public Viewport Viewport { get; }
 
+        private ICameraInfoCache m_Cache;
+
         /// <inheritdoc />
-        public ICameraInfoCache Cache { get; }
+        public ICameraInfoCache Cache => m_Cache ?? (m_Cache = new CameraInfoCache(this));
 
         #endregion
 
@@ -40,7 +42,6 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera
             UpVector = upVector;
             Projection = projection;
             Viewport = viewport;
-            Cache = new CameraInfoCache(this);
         }
 
         #endregion

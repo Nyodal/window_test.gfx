@@ -1,5 +1,6 @@
 ﻿using FlexRobotics.gfx.Mathematics.Extensions;
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Spatial.Euclidean;
 
 namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
 {
@@ -48,6 +49,12 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
         public override IProjection GetAdjustedProjection(double aspectRatio)
         {
             return new ProjectionPerspective(NearPlane, FarPlane, FieldOfViewY, aspectRatio);
+        }
+
+        /// <inheritdoc />
+        public override Ray3D GetMouseRay(ICameraInfo cameraInfo, Point3D mouseWorld)
+        {
+            return new Ray3D(mouseWorld, (mouseWorld - cameraInfo.Position).Normalize());
         }
 
         #endregion

@@ -8,6 +8,6 @@ namespace FlexRobotics.gfx.Mathematics.Extensions
 
         public static Point2D ToPoint2D(this System.Windows.Point point) => new Point2D(point.X, point.Y);
 
-        public static Point3D ToPoint3D(this Point2D point) => new Point3D(point.X, point.Y, 0);
+        public static Point3D ToPoint3D(this Point2D point, double zoffset) => new Point3D(point.X, point.Y, zoffset);
     }
 }

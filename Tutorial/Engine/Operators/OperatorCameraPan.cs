@@ -78,7 +78,7 @@ namespace FlexRobotics.gfx.Engine.Operators
             MouseDownPlane = new Plane(panOrigin, MouseDownCameraInfo.GetEyeDirection());
 
             // intersect mouse ray with plane
-            var mouseRay = MouseDownCameraInfo.GetMouseRay(Space.Screen, args.Position.ToPoint3D());
+            var mouseRay = MouseDownCameraInfo.GetMouseRay(Space.Screen, args.Position.ToPoint3D(0));
             MouseDownOnPlane = MouseDownPlane.Value.IntersectionWith(mouseRay);
         }
 
@@ -102,7 +102,7 @@ namespace FlexRobotics.gfx.Engine.Operators
             if (MouseDownCameraInfo is null || !MouseDownPlane.HasValue || !MouseDownOnPlane.HasValue) return;
 
             // intersect mouse ray with plane
-            var mouseRay = MouseDownCameraInfo.GetMouseRay(Space.Screen, args.Position.ToPoint3D());
+            var mouseRay = MouseDownCameraInfo.GetMouseRay(Space.Screen, args.Position.ToPoint3D(0));
             var mouseMoveOnPlane = MouseDownPlane.Value.IntersectionWith(mouseRay);
 
             // figure out new camera position and target

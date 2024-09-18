@@ -14,6 +14,36 @@ namespace FlexRobotics.gfx.Utilities
         }
 
         /// <summary>
+        /// Fill array with the same value.
+        /// </summary>
+        public static void Fill<T>(this T[] array, T value)
+        {
+            var length = array.Length;
+            if (length == 0) return;
+
+            // seed
+            var seed = Math.Min(32, array.Length);
+            for (var i = 0; i < seed; i++)
+            {
+                array[i] = value;
+            }
+
+            // copy by doubling
+            int count;
+            for (count = seed; count <= length / 2; count *= 2)
+            {
+                Array.Copy(array, 0, array, count, count);
+            }
+
+            // copy last part
+            var leftover = length - count;
+            if (leftover > 0)
+            {
+                Array.Copy(array, 0, array, count, leftover);
+            }
+        }
+
+        /// <summary>
         /// Does <see cref="List{T}.ForEach"/> on <see cref="IEnumerable{T}"/> collection.
         /// </summary>
         public static void ForEach<T>(this IEnumerable<T> collection, Action<T> action)
@@ -24,16 +54,25 @@ namespace FlexRobotics.gfx.Utilities
             }
         }
 
+        /// <summary>
+        /// Get handle of this window.
+        /// </summary>
         public static IntPtr Handle(this System.Windows.Forms.Control window)
         {
             return window.IsDisposed ? default : Handle((System.Windows.Forms.IWin32Window)window);
         }
 
+        /// <summary>
+        /// Get handle of this window.
+        /// </summary>
         public static IntPtr Handle(this System.Windows.Forms.IWin32Window window)
         {
             return window.Handle;
         }
 
+        /// <summary>
+        /// Get handle of this window.
+        /// </summary>
         public static IntPtr Handle(this System.Windows.Media.Visual window)
         {
             var handleSource = window.HandleSource();
@@ -52,6 +91,14 @@ namespace FlexRobotics.gfx.Utilities
         public static System.Windows.Interop.HwndSource HandleSource(this System.Windows.Media.Visual window)
         {
             return System.Windows.PresentationSource.FromVisual(window) as System.Windows.Interop.HwndSource;
+        }
+
+        /// <summary>
+        /// Convert color to RGBA integer: 0xRRGGBBAA;
+        /// </summary>
+        public static int ToRgba(this System.Drawing.Color color)
+        {
+            return ((((color.A << 8) + color.B) << 8) + color.G << 8) + color.R;
         }
     }
 }

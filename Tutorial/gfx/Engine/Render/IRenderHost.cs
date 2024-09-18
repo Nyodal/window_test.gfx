@@ -1,6 +1,8 @@
 ﻿using FlexRobotics.gfx.Engine.Commons.Camera;
 using FlexRobotics.gfx.Inputs;
+using FlexRobotics.gfx.Materials;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace FlexRobotics.gfx.Engine.Render
@@ -35,7 +37,7 @@ namespace FlexRobotics.gfx.Engine.Render
         /// <summary>
         /// Render.
         /// </summary>
-        void Render();
+        void Render(IEnumerable<IPrimitive> primitives);
 
         /// <summary>
         /// Fires when <see cref="CameraInfo"/> changed.

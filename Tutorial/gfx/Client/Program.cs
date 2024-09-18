@@ -1,7 +1,7 @@
 ﻿using FlexRobotics.gfx.Engine.Commons.Camera;
 using FlexRobotics.gfx.Engine.Render;
+using FlexRobotics.gfx.Materials;
 using FlexRobotics.gfx.Utilities;
-using MathNet.Spatial.Euclidean;
 using System;
 using System.Collections.Generic;
 
@@ -48,7 +48,7 @@ namespace FlexRobotics.gfx.Client
             // render loop
             while (!Dispatcher.HasShutdownStarted)
             {
-                Render(RenderHosts);
+                Render(RenderHosts, Seed.GetPrimitives());
                 System.Windows.Forms.Application.DoEvents();
             }
         }
@@ -65,9 +65,9 @@ namespace FlexRobotics.gfx.Client
 
         #region // render
 
-        private static void Render(IEnumerable<IRenderHost> renderHosts)
+        private static void Render(IEnumerable<IRenderHost> renderHosts, IEnumerable<IPrimitive> primitives)
         {
-            renderHosts.ForEach(rh => rh.Render());
+            renderHosts.ForEach(rh => rh.Render(primitives));
         }
         #endregion
     }

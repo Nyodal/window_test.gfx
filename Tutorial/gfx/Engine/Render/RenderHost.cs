@@ -8,6 +8,7 @@ using MathNet.Spatial.Euclidean;
 using FlexRobotics.gfx.Engine.Operators;
 using System.Collections.Generic;
 using FlexRobotics.gfx.Utilities;
+using FlexRobotics.gfx.Materials;
 
 namespace FlexRobotics.gfx.Engine.Render
 {
@@ -161,16 +162,16 @@ namespace FlexRobotics.gfx.Engine.Render
 
         #region //render
 
-        public void Render()
+        public void Render(IEnumerable<IPrimitive> primitives)
         {
             EnsureBufferSize();
             FrameStarted = DateTime.UtcNow;
             FPSCounter.StartFrame();
-            RenderInternal();
+            RenderInternal(primitives);
             FPSCounter.StopFrame();
         }
 
-        protected abstract void RenderInternal();
+        protected abstract void RenderInternal(IEnumerable<IPrimitive> primitives);
 
         #endregion
     }

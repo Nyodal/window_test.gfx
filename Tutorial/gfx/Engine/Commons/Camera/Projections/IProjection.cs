@@ -1,4 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using FlexRobotics.gfx.Mathematics;
 using MathNet.Spatial.Euclidean;
 using System;
 
@@ -23,7 +23,7 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
         /// <summary>
         /// Create projection matrix.
         /// </summary>
-        Matrix<double> GetMatrixProjection();
+        Matrix4D GetMatrixProjection();
 
         /// <summary>
         /// Create new projection based on existing one and adjusted by new aspect ratio.

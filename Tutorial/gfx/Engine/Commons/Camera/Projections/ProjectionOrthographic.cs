@@ -1,5 +1,5 @@
-﻿using FlexRobotics.gfx.Mathematics.Extensions;
-using MathNet.Numerics.LinearAlgebra;
+﻿using FlexRobotics.gfx.Mathematics;
+using FlexRobotics.gfx.Mathematics.Extensions;
 using MathNet.Spatial.Euclidean;
 
 namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
@@ -48,9 +48,9 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
         }
 
         /// <inheritdoc />
-        public override Matrix<double> GetMatrixProjection()
+        public override Matrix4D GetMatrixProjection()
         {
-            return MatrixEx.OrthoRH(FieldWidth, FieldHeight, NearPlane, FarPlane);
+            return Matrix4DEx.OrthoRH(FieldWidth, FieldHeight, NearPlane, FarPlane);
         }
 
         /// <inheritdoc />

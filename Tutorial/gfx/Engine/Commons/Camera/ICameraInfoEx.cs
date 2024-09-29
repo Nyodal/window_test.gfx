@@ -1,6 +1,5 @@
 ﻿using FlexRobotics.gfx.Mathematics.Extensions;
 using FlexRobotics.gfx.Mathematics;
-using MathNet.Numerics.LinearAlgebra;
 using MathNet.Spatial.Euclidean;
 using System;
 
@@ -24,7 +23,7 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera
         /// <summary>
         /// Get transformation matrix from one space to another.
         /// </summary>
-        public static Matrix<double> GetTransformationMatrix(this ICameraInfo cameraInfo, Space from, Space to)
+        public static Matrix4D GetTransformationMatrix(this ICameraInfo cameraInfo, Space from, Space to)
         {
             switch (from)
             {
@@ -32,7 +31,7 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera
                     switch (to)
                     {
                         case Space.World:
-                            return MatrixEx.Identity;
+                            return Matrix4D.Identity;
 
                         case Space.View:
                             return cameraInfo.Cache.MatrixViewProjection;
@@ -51,7 +50,7 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera
                             return cameraInfo.Cache.MatrixViewProjectionInverse;
 
                         case Space.View:
-                            return MatrixEx.Identity;
+                            return Matrix4D.Identity;
 
                         case Space.Screen:
                             return cameraInfo.Cache.MatrixViewport;
@@ -70,7 +69,7 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera
                             return cameraInfo.Cache.MatrixViewportInverse;
 
                         case Space.Screen:
-                            return MatrixEx.Identity;
+                            return Matrix4D.Identity;
 
                         default:
                             throw new ArgumentOutOfRangeException(nameof(to), to, null);

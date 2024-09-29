@@ -1,5 +1,4 @@
-﻿using FlexRobotics.gfx.Engine.Commons.Camera;
-using FlexRobotics.gfx.Engine.Render;
+﻿using FlexRobotics.gfx.Engine.Render;
 using FlexRobotics.gfx.Materials;
 using FlexRobotics.gfx.Utilities;
 using System;

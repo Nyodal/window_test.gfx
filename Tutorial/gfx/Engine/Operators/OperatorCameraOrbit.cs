@@ -106,7 +106,7 @@ namespace FlexRobotics.gfx.Engine.Operators
             var xAxis = yzPlane.Normal;
             var xzPlane = Plane.FromPoints(new Point3D(), zAxis.ToPoint3D(), xAxis.ToPoint3D());
             var yAxis = xzPlane.Normal;
-            var matrixWorldToLocal = (Matrix<double>)new CoordinateSystem(new Point3D(), xAxis, yAxis, zAxis);
+            var matrixWorldToLocal = Matrix4DEx.CoordinateSystem(new Point3D(), xAxis, yAxis, zAxis);
 
             // transform to local system
             orbitOrigin = matrixWorldToLocal.Transform(orbitOrigin);
@@ -117,13 +117,13 @@ namespace FlexRobotics.gfx.Engine.Operators
             GetSphereAngles(mouseOffsetView, (target - eye).Normalize(), out var thetaDelta, out var phiDelta);
 
             // rotate horizontally
-            var matrixRotationHorizontal = MatrixEx.Rotate(UnitVector3D.ZAxis, thetaDelta.Radians).TransformAround(orbitOrigin);
+            var matrixRotationHorizontal = Matrix4DEx.Rotate(UnitVector3D.ZAxis, thetaDelta.Radians).TransformAround(orbitOrigin);
             eye = matrixRotationHorizontal.Transform(eye);
             target = matrixRotationHorizontal.Transform(target);
 
             // rotate vertically
             var phiPlane = Plane.FromPoints(eye, target, target + UnitVector3D.ZAxis);
-            var matrixRotationVertical = MatrixEx.Rotate(phiPlane.Normal, phiDelta.Radians).TransformAround(orbitOrigin);
+            var matrixRotationVertical = Matrix4DEx.Rotate(phiPlane.Normal, phiDelta.Radians).TransformAround(orbitOrigin);
             eye = matrixRotationVertical.Transform(eye);
             target = matrixRotationVertical.Transform(target);
 

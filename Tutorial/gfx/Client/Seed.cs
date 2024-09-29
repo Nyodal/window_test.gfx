@@ -45,7 +45,7 @@ namespace FlexRobotics.gfx.Client
             new[] { new Vector3F(1, 0, 0), new Vector3F(1, 0, 1), },
             new[] { new Vector3F(1, 1, 0), new Vector3F(1, 1, 1), },
             new[] { new Vector3F(0, 1, 0), new Vector3F(0, 1, 1), },
-        }.Select(polyline => MatrixEx.Translate(-0.5, -0.5, -0.5).Transform(polyline).ToArray()).ToArray();
+        }.Select(polyline => Matrix4DEx.Translate(-0.5, -0.5, -0.5).Transform(polyline)).ToArray();
 
         /// <summary>
         /// Point cloud of a bunny.
@@ -53,7 +53,7 @@ namespace FlexRobotics.gfx.Client
         private static readonly IPrimitive[] PointCloudBunny = new Func<IPrimitive[]>(() =>
         {
             // adjust for different coordinate system
-            var matrix = MatrixEx.Scale(10) * MatrixEx.Rotate(QuaternionEx.AroundAxis(UnitVector3D.XAxis, Math.PI * 0.5));
+            var matrix = Matrix4DEx.Scale(10) * Matrix4DEx.Rotate(QuaternionEx.AroundAxis(UnitVector3D.XAxis, Math.PI * 0.5));
 
             // point cloud source: http://graphics.stanford.edu/data/3Dscanrep/
             var vertices = StreamPointCloud_XYZ(@"..\..\..\resources\bunny.xyz")
@@ -88,7 +88,9 @@ namespace FlexRobotics.gfx.Client
         /// </summary>
         public static IEnumerable<IPrimitive> GetPrimitives()
         {
-            return GetPrimitivesAxisPoints()
+            return GetPrimitivesWorldAxis()
+                .Concat(GetPrimitivesScreenViewLines())
+                .Concat(GetPrimitivesCubes())
                 .Concat(GetPrimitivesPointCloud())
                 ;
         }
@@ -102,7 +104,7 @@ namespace FlexRobotics.gfx.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.Screen),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(3, 20, 0)),
@@ -115,7 +117,7 @@ namespace FlexRobotics.gfx.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.View),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(-0.9f, -0.9f, 0)),
@@ -134,7 +136,7 @@ namespace FlexRobotics.gfx.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
@@ -147,7 +149,7 @@ namespace FlexRobotics.gfx.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
@@ -160,7 +162,7 @@ namespace FlexRobotics.gfx.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
@@ -180,9 +182,9 @@ namespace FlexRobotics.gfx.Client
             // world space bigger cube
             var angle = GetTimeSpanPeriodRatio(duration, new TimeSpan(0, 0, 0, 5)) * Math.PI * 2;
             var matrixModel =
-                MatrixEx.Scale(0.5) *
-                MatrixEx.Rotate(UnitVector3D.XAxis, angle) *
-                MatrixEx.Translate(1, 0, 0);
+                Matrix4DEx.Scale(0.5) *
+                Matrix4DEx.Rotate(UnitVector3D.XAxis, angle) *
+                Matrix4DEx.Translate(1, 0, 0);
 
             foreach (var cubePolyline in CubePolylines)
             {
@@ -198,9 +200,9 @@ namespace FlexRobotics.gfx.Client
             // world space smaller cube
             angle = GetTimeSpanPeriodRatio(duration, new TimeSpan(0, 0, 0, 1)) * Math.PI * 2;
             matrixModel =
-                MatrixEx.Scale(0.5) *
-                MatrixEx.Rotate(UnitVector3D.YAxis, angle) *
-                MatrixEx.Translate(0, 1, 0) *
+                Matrix4DEx.Scale(0.5) *
+                Matrix4DEx.Rotate(UnitVector3D.YAxis, angle) *
+                Matrix4DEx.Translate(0, 1, 0) *
                 matrixModel;
 
             foreach (var cubePolyline in CubePolylines)
@@ -213,41 +215,6 @@ namespace FlexRobotics.gfx.Client
                     Color.Yellow
                 );
             }
-        }
-
-        /// <summary>
-        /// Get some point primitives to represent world axis.
-        /// </summary>
-        private static IEnumerable<IPrimitive> GetPrimitivesAxisPoints()
-        {
-            const int freq = 100;
-
-            // x axis
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.PointList,
-                Enumerable.Range(0, freq).Select(i => new Materials.Position.Vertex(new Vector3F((float)i / freq, 0, 0))).ToArray(),
-                Color.Red
-            );
-
-            // y axis
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.PointList,
-                Enumerable.Range(0, freq).Select(i => new Materials.Position.Vertex(new Vector3F(0, (float)i / freq, 0))).ToArray(),
-                Color.LawnGreen
-            );
-
-            // z axis
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.PointList,
-                Enumerable.Range(0, freq).Select(i => new Materials.Position.Vertex(new Vector3F(0, 0, (float)i / freq))).ToArray(),
-                Color.Blue
-            );
         }
 
         /// <summary>

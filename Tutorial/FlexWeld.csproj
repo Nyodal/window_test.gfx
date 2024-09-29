@@ -130,11 +130,15 @@
     <Compile Include="gfx\Materials\Primitive.cs" />
     <Compile Include="gfx\Materials\PrimitiveBehaviour.cs" />
     <Compile Include="gfx\Materials\PrimitiveTopology.cs" />
-    <Compile Include="gfx\Mathematics\Extensions\MatrixEx.cs" />
+    <Compile Include="gfx\Mathematics\Extensions\Matrix4DEx.cs" />
     <Compile Include="gfx\Mathematics\Extensions\Point2DEx.cs" />
     <Compile Include="gfx\Mathematics\Extensions\QuaternionEx.cs" />
+    <Compile Include="gfx\Mathematics\Extensions\Vector2FEx.cs" />
+    <Compile Include="gfx\Mathematics\Extensions\Vector3DEx.cs" />
+    <Compile Include="gfx\Mathematics\Extensions\Vector3FEx.cs" />
     <Compile Include="gfx\Mathematics\Extensions\Vector4DEx.cs" />
     <Compile Include="gfx\Mathematics\Extensions\Vector4FEx.cs" />
+    <Compile Include="gfx\Mathematics\Matrix4D.cs" />
     <Compile Include="gfx\Mathematics\Space.cs" />
     <Compile Include="gfx\Mathematics\Vector2F.cs" />
     <Compile Include="gfx\Mathematics\Vector3F.cs" />

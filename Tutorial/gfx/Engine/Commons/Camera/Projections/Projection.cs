@@ -1,4 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using FlexRobotics.gfx.Mathematics;
 using MathNet.Spatial.Euclidean;
 
 namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
@@ -34,7 +34,7 @@ namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
         public abstract object Clone();
 
         /// <inheritdoc />
-        public abstract Matrix<double> GetMatrixProjection();
+        public abstract Matrix4D GetMatrixProjection();
 
         /// <inheritdoc />
         public abstract IProjection GetAdjustedProjection(double aspectRatio);

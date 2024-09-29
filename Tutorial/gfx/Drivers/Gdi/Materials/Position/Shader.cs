@@ -1,18 +1,17 @@
-﻿using FlexRobotics.gfx.Materials.Position;
-using FlexRobotics.gfx.Mathematics.Extensions;
+﻿using FlexRobotics.gfx.Mathematics.Extensions;
 using FlexRobotics.gfx.Mathematics;
 
 namespace FlexRobotics.gfx.Drivers.Gdi.Materials.Position
 {
     public class Shader :
-            Shader<Vertex, VertexShader>
+           Shader<gfx.Materials.Position.Vertex, Vertex>
     {
         #region // storage
 
         /// <summary>
-        /// Transform from world space to clip space.
+        /// Transform from given space to clip space.
         /// </summary>
-        private Matrix4D MatrixWorldViewProjection { get; set; } = Matrix4D.Identity;
+        private Matrix4D MatrixToClip { get; set; } = Matrix4D.Identity;
 
         /// <summary>
         /// Color in which primitives are gonna be drawn.
@@ -26,9 +25,9 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Materials.Position
         /// <summary>
         /// Update global shader memory.
         /// </summary>
-        public void Update(Matrix4D matrixWorldViewProjection, System.Drawing.Color color)
+        public void Update(in Matrix4D matrixToClip, System.Drawing.Color color)
         {
-            MatrixWorldViewProjection = matrixWorldViewProjection;
+            MatrixToClip = matrixToClip;
             Color = color.ToVector4F();
         }
 
@@ -37,16 +36,16 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Materials.Position
         #region // shaders
 
         /// <inheritdoc />
-        public override VertexShader VertexShader(in Vertex vertex)
+        public override Vertex VertexShader(in gfx.Materials.Position.Vertex vertex)
         {
-            return new VertexShader
+            return new Vertex
             (
-                MatrixWorldViewProjection.Transform(vertex.Position.ToVector4F(1))
+                MatrixToClip.Transform(vertex.Position.ToVector4F(1))
             );
         }
 
         /// <inheritdoc />
-        public override Vector4F? PixelShader(in VertexShader vertex)
+        public override Vector4F? PixelShader(in Vertex vertex)
         {
             return Color.W > 0 ? Color : default;
         }

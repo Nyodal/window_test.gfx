@@ -1,4 +1,4 @@
-﻿namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
+﻿namespace FlexRobotics.gfx.Engine.Common.Camera.Projections
 {
     /// <summary>
     /// Perspective projection.

@@ -1,11 +1,13 @@
-﻿using System;
+﻿using FlexRobotics.gfx.Mathematics.Extensions;
+using System;
 using System.Runtime.InteropServices;
 
 namespace FlexRobotics.gfx.Mathematics
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public readonly struct Vector2F
+    public readonly struct Vector2F :
+           IInterpolate<Vector2F>
     {
         #region // static
 
@@ -62,6 +64,19 @@ namespace FlexRobotics.gfx.Mathematics
             (
                 left.X / right,
                 left.Y / right
+            );
+        }
+
+        #endregion
+
+        #region // interpolation
+
+        public Vector2F InterpolateLinear(in Vector2F other, float alpha)
+        {
+            return new Vector2F
+            (
+                X.InterpolateLinear(other.X, alpha),
+                Y.InterpolateLinear(other.Y, alpha)
             );
         }
 

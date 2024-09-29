@@ -1,6 +1,6 @@
 ﻿using FlexRobotics.gfx.Mathematics;
 
-namespace FlexRobotics.gfx.Engine.Commons.Camera
+namespace FlexRobotics.gfx.Engine.Common.Camera
 {
     /// <summary>
     /// Storage for matrices.

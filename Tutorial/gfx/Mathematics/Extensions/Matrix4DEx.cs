@@ -1,5 +1,4 @@
-﻿using FlexRobotics.gfx.Engine.Commons;
-using FlexRobotics.gfx.Mathematics.Extensions;
+﻿using FlexRobotics.gfx.Engine.Common.Camera;
 using MathNet.Spatial.Euclidean;
 using System;
 

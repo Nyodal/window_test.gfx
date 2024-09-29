@@ -3,7 +3,7 @@ using FlexRobotics.gfx.Mathematics;
 using MathNet.Spatial.Euclidean;
 using System;
 
-namespace FlexRobotics.gfx.Engine.Commons.Camera
+namespace FlexRobotics.gfx.Engine.Common.Camera
 {
     /// <summary>
     /// <see cref="ICameraInfo"/> extensions.

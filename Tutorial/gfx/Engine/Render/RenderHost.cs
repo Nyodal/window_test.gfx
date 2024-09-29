@@ -1,9 +1,9 @@
 ﻿using FlexRobotics.gfx.Inputs;
-using FlexRobotics.gfx.Engine.Commons;
+using FlexRobotics.gfx.Engine.Common;
 using System;
 using System.Drawing;
-using FlexRobotics.gfx.Engine.Commons.Camera;
-using FlexRobotics.gfx.Engine.Commons.Camera.Projections;
+using FlexRobotics.gfx.Engine.Common.Camera;
+using FlexRobotics.gfx.Engine.Common.Camera.Projections;
 using MathNet.Spatial.Euclidean;
 using FlexRobotics.gfx.Engine.Operators;
 using System.Collections.Generic;

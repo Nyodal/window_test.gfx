@@ -1,8 +1,8 @@
-﻿using FlexRobotics.gfx.Engine.Commons.Camera.Projections;
+﻿using FlexRobotics.gfx.Engine.Common.Camera.Projections;
 using FlexRobotics.gfx.Utilities;
 using MathNet.Spatial.Euclidean;
 
-namespace FlexRobotics.gfx.Engine.Commons.Camera
+namespace FlexRobotics.gfx.Engine.Common.Camera
 {
     /// <inheritdoc cref="ICameraInfo"/>
     public class CameraInfo :

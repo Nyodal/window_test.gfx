@@ -1,4 +1,4 @@
-﻿namespace FlexRobotics.gfx.Engine.Commons
+﻿namespace FlexRobotics.gfx.Engine.Common.Camera
 {
     public struct Viewport
     {

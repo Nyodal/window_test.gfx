@@ -2,7 +2,7 @@
 using FlexRobotics.gfx.Mathematics.Extensions;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace FlexRobotics.gfx.Engine.Commons.Camera
+namespace FlexRobotics.gfx.Engine.Common.Camera
 {
     /// <inheritdoc cref="ICameraInfoCache" />
     public class CameraInfoCache :

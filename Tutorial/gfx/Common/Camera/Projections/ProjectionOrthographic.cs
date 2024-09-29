@@ -2,7 +2,7 @@
 using FlexRobotics.gfx.Mathematics.Extensions;
 using MathNet.Spatial.Euclidean;
 
-namespace FlexRobotics.gfx.Engine.Commons.Camera.Projections
+namespace FlexRobotics.gfx.Engine.Common.Camera.Projections
 {
     /// <inheritdoc cref="IProjectionOrthographic"/>
     public class ProjectionOrthographic :

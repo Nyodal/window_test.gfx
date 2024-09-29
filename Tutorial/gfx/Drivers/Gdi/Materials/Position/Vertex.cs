@@ -3,8 +3,8 @@
 namespace FlexRobotics.gfx.Drivers.Gdi.Materials.Position
 {
     /// <inheritdoc cref="IVertexShader"/>
-    public readonly struct VertexShader :
-        IVertexShader<VertexShader>
+    public readonly struct Vertex :
+        IVertex
     {
         #region // storage
 
@@ -16,7 +16,7 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Materials.Position
         #region // ctor
 
         /// <summary />
-        public VertexShader(Vector4F position)
+        public Vertex(Vector4F position)
         {
             Position = position;
         }
@@ -24,12 +24,6 @@ namespace FlexRobotics.gfx.Drivers.Gdi.Materials.Position
         #endregion
 
         #region // routines
-
-        /// <inheritdoc />
-        public VertexShader CloneWithNewPosition(Vector4F position)
-        {
-            return new VertexShader(position);
-        }
 
         /// <inheritdoc />
         public override string ToString()

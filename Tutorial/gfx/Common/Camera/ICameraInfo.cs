@@ -1,8 +1,8 @@
-﻿using FlexRobotics.gfx.Engine.Commons.Camera.Projections;
+﻿using FlexRobotics.gfx.Engine.Common.Camera.Projections;
 using MathNet.Spatial.Euclidean;
 using System;
 
-namespace FlexRobotics.gfx.Engine.Commons.Camera
+namespace FlexRobotics.gfx.Engine.Common.Camera
 {
     /// <summary>
     /// Camera information describing view.

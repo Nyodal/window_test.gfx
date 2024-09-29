@@ -92,6 +92,7 @@ namespace FlexRobotics.gfx.Client
                 .Concat(GetPrimitivesScreenViewLines())
                 .Concat(GetPrimitivesCubes())
                 .Concat(GetPrimitivesPointCloud())
+                .Concat(GetPrimitivesTriangles())
                 ;
         }
 
@@ -223,6 +224,42 @@ namespace FlexRobotics.gfx.Client
         private static IEnumerable<IPrimitive> GetPrimitivesPointCloud()
         {
             return PointCloudBunny;
+        }
+
+        /// <summary>
+        /// Get some triangle primitives.
+        /// </summary>
+        private static IEnumerable<IPrimitive> GetPrimitivesTriangles()
+        {
+            yield return new Materials.Position.Primitive
+            (
+                new PrimitiveBehaviour(Space.World),
+                PrimitiveTopology.TriangleStrip,
+                new[]
+                {
+                    new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
+                    new Materials.Position.Vertex(new Vector3F(1, 0, 0)),
+                    new Materials.Position.Vertex(new Vector3F(0, 1, 0)),
+                    new Materials.Position.Vertex(new Vector3F(1, 1, 0)),
+                },
+                Color.Goldenrod
+            );
+
+            yield return new Materials.Position.Primitive
+            (
+                new PrimitiveBehaviour(Space.World),
+                PrimitiveTopology.TriangleList,
+                new[]
+                {
+                    new Materials.Position.Vertex(new Vector3F(-2, 0, 0)),
+                    new Materials.Position.Vertex(new Vector3F(-2, 1, 0)),
+                    new Materials.Position.Vertex(new Vector3F(-1, 0, 0)),
+                    new Materials.Position.Vertex(new Vector3F(-4, 0, 0)),
+                    new Materials.Position.Vertex(new Vector3F(-4, 1, 0)),
+                    new Materials.Position.Vertex(new Vector3F(-3, 0, 0)),
+                },
+                Color.Cyan
+            );
         }
 
         /// <summary>

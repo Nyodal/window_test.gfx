@@ -6,6 +6,23 @@ namespace FlexRobotics.gfx.Utilities
     public static class U
     {
         /// <summary>
+        /// Clamp value (ensure it falls into a given range).
+        /// </summary>
+        public static int Clamp(this int value, int min, int max)
+        {
+            if (value < min)
+            {
+                value = min;
+                return value;
+            }
+            if (value > max)
+            {
+                value = max;
+            }
+            return value;
+        }
+
+        /// <summary>
         /// <see cref="ICloneable.Clone"/> and cast it to explicit type <typeparam name="T"/>.
         /// </summary>
         public static T Cloned<T>(this T cloneable) where T : ICloneable
@@ -91,6 +108,16 @@ namespace FlexRobotics.gfx.Utilities
         public static System.Windows.Interop.HwndSource HandleSource(this System.Windows.Media.Visual window)
         {
             return System.Windows.PresentationSource.FromVisual(window) as System.Windows.Interop.HwndSource;
+        }
+
+        /// <summary>
+        /// Swap two instances.
+        /// </summary>
+        public static void Swap<T>(ref T value0, ref T value1)
+        {
+            var temp = value0;
+            value0 = value1;
+            value1 = temp;
         }
 
         /// <summary>
